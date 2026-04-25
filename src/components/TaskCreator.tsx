@@ -22,13 +22,10 @@ export const TaskCreator: React.FC = () => {
 
     try {
       const response = await apiClient.createTask({
-        // If AI is enabled, we send the raw input
-        // If not, we just send it as a title
-        title: isAiEnabled ? undefined : input,
-        // @ts-ignore - adding custom fields for the API
+        title: isAiEnabled ? '' : input,
         rawInput: isAiEnabled ? input : undefined,
         isAiEnabled,
-      } as any);
+      });
 
       if (response.data.success && response.data.data) {
         addTask(response.data.data);
@@ -37,6 +34,7 @@ export const TaskCreator: React.FC = () => {
         setError(response.data.error || 'Failed to create task');
       }
     } catch (err: any) {
+
       setError(err.message || 'Something went wrong');
     } finally {
       setIsLoading(false);

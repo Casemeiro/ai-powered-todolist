@@ -8,15 +8,9 @@ export interface Subtask {
   taskId: string
   title: string
   completed: boolean
-  dueDate?: Date
+  dueDate?: Date | string
   order: number
-  createdAt: Date
-}
-
-export interface NLPExtraction {
-  rawInput: string
-  parsedEntities: Record<string, unknown>
-  confidence: number
+  createdAt: Date | string
 }
 
 export interface Task {
@@ -24,18 +18,20 @@ export interface Task {
   userId: string
   title: string
   description?: string
-  dueDate: Date
+  dueDate: Date | string
   priority: TaskPriority
   status: TaskStatus
   category: TaskCategory
   tags: string[]
-  estimatedTime?: number // in minutes
-  actualTime?: number // in minutes
+  estimatedTime?: number
+  actualTime?: number
   subtasks: Subtask[]
-  createdAt: Date
-  completedAt?: Date
-  aiPriority?: number // 0-100
-  nlpExtraction?: NLPExtraction
+  createdAt: Date | string
+  completedAt?: Date | string
+  aiPriority?: number
+  nlpRawInput?: string
+  nlpParsedEntities?: any
+  nlpConfidence?: number
 }
 
 /* User Types */

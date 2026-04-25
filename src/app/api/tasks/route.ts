@@ -53,6 +53,9 @@ export async function POST(req: NextRequest) {
 
     // 1. Natural Language Task Creation
     if (isAiEnabled && rawInput) {
+      if (!process.env.OPENAI_API_KEY) {
+        throw new Error('AI features are currently unavailable (OpenAI API Key missing)');
+      }
       const parsed = await aiService.parseTask(rawInput);
       taskData = {
         ...taskData,
@@ -62,6 +65,11 @@ export async function POST(req: NextRequest) {
         priority: parsed.priority,
         category: parsed.category,
       };
+    }
+
+    // Ensure title is not empty
+    if (!taskData.title && !isAiEnabled) {
+      throw new Error('Task title is required');
     }
 
     // Create the task
@@ -75,16 +83,18 @@ export async function POST(req: NextRequest) {
     // 2. Automated Task Decomposition
     // If it's a "big" task (e.g., category is Academics or contains certain keywords), auto-decompose
     if (isAiEnabled && (task.category === 'Academics' || task.title.length > 20)) {
-      const subtaskTitles = await aiService.decomposeTask(task.title, task.description || '');
-      
-      if (subtaskTitles.length > 0) {
-        await prisma.subtask.createMany({
-          data: subtaskTitles.map((stTitle, index) => ({
-            title: stTitle,
-            taskId: task.id,
-            order: index,
-          })),
-        });
+      if (process.env.OPENAI_API_KEY) {
+        const subtaskTitles = await aiService.decomposeTask(task.title, task.description || '');
+        
+        if (subtaskTitles.length > 0) {
+          await prisma.subtask.createMany({
+            data: subtaskTitles.map((stTitle, index) => ({
+              title: stTitle,
+              taskId: task.id,
+              order: index,
+            })),
+          });
+        }
       }
     }
 

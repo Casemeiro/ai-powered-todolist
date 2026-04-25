@@ -1,33 +1,50 @@
-import Link from 'next/link'
+'use client';
+
+import React, { useEffect } from 'react';
+import { TaskCreator } from '@/components/TaskCreator';
+import { TaskList } from '@/components/TaskList';
+import { apiClient } from '@/services/api';
+import { useTaskStore } from '@/store';
 
 export default function Home() {
+  const setTasks = useTaskStore((state) => state.setTasks);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const response = await apiClient.getTasks();
+        if (response.data.success && response.data.data) {
+          setTasks(response.data.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch tasks:', error);
+      }
+    };
+
+    fetchTasks();
+  }, [setTasks]);
+
   return (
-    <main className="min-h-screen bg-gradient-to-br from-primary via-secondary to-purple-600">
-      <div className="flex items-center justify-center min-h-screen px-4">
-        <div className="text-center text-white max-w-2xl">
-          <h1 className="text-5xl font-bold mb-6">AI To-Do List</h1>
-          <p className="text-xl mb-4 opacity-90">
-            An intelligent task management app powered by AI for students
+    <main className="min-h-screen bg-neutral-50 py-12 px-4">
+      <div className="max-w-3xl mx-auto space-y-12">
+        <header className="text-center space-y-4">
+          <h1 className="text-4xl font-bold text-neutral-900 flex items-center justify-center gap-3">
+            <span className="text-primary">✨</span> AI To-Do List
+          </h1>
+          <p className="text-neutral-500 max-w-lg mx-auto">
+            Manage your studies with the power of AI. Just type what you need to do, and we'll handle the rest.
           </p>
-          <p className="text-lg mb-8 opacity-80">
-            Organize, prioritize, and complete your tasks smarter.
-          </p>
-          <div className="flex gap-4 justify-center flex-wrap">
-            <Link
-              href="/login"
-              className="px-8 py-3 bg-white text-primary font-semibold rounded-lg hover:bg-neutral-100 transition"
-            >
-              Sign In
-            </Link>
-            <Link
-              href="/signup"
-              className="px-8 py-3 bg-neutral-800 text-white font-semibold rounded-lg hover:bg-neutral-700 transition border border-white"
-            >
-              Sign Up
-            </Link>
+        </header>
+
+        <section className="space-y-8">
+          <TaskCreator />
+          
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-neutral-700 px-1">Your Tasks</h2>
+            <TaskList />
           </div>
-        </div>
+        </section>
       </div>
     </main>
-  )
+  );
 }

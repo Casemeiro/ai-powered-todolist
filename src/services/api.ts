@@ -31,7 +31,7 @@ class APIClient {
     return this.client.get<ApiResponse<Task>>(`/tasks/${id}`)
   }
 
-  createTask(data: Partial<Task>) {
+  createTask(data: Partial<Task> & { isAiEnabled?: boolean; rawInput?: string }) {
     return this.client.post<ApiResponse<Task>>('/tasks', data)
   }
 
