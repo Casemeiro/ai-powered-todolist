@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { aiService } from '@/services/aiService';
+import { TaskPriority, TaskCategory } from '@/types';
 
 /**
  * GET /api/tasks
@@ -42,12 +43,15 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { title, description, dueDate, priority, category, isAiEnabled, rawInput } = body;
 
+    const validPriorities: TaskPriority[] = ['Low', 'Medium', 'High', 'Urgent'];
+    const validCategories: TaskCategory[] = ['Work', 'Personal', 'Academics', 'Health'];
+
     let taskData = {
       title,
       description,
       dueDate: dueDate ? new Date(dueDate) : new Date(),
-      priority: priority || 'Medium',
-      category: category || 'Personal',
+      priority: validPriorities.includes(priority) ? priority : 'Medium',
+      category: validCategories.includes(category) ? category : 'Personal',
       userId,
     };
 
@@ -105,8 +109,9 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ success: true, data: finalTask });
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to create task';
     console.error('Task Creation Error:', error);
-    return NextResponse.json({ success: false, error: error.message || 'Failed to create task' }, { status: 500 });
+    return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }

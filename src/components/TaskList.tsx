@@ -1,20 +1,12 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useTaskStore } from '@/store';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getPriorityColor } from '@/utils/constants';
 
 export const TaskList: React.FC = () => {
-  const { tasks, removeTask, updateTask } = useTaskStore();
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'Urgent': return 'bg-red-100 text-red-600';
-      case 'High': return 'bg-orange-100 text-orange-600';
-      case 'Medium': return 'bg-blue-100 text-blue-600';
-      default: return 'bg-neutral-100 text-neutral-600';
-    }
-  };
+  const { tasks, removeTask } = useTaskStore();
 
   if (tasks.length === 0) {
     return (

@@ -5,9 +5,7 @@ const nextConfig = {
   typescript: {
     tsconfigPath: './tsconfig.json',
   },
-  compiler: {
-    styledComponents: true,
-  },
+
 }
 
 module.exports = nextConfig

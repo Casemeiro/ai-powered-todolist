@@ -27,7 +27,7 @@ export const aiService = {
    */
   async parseTask(input: string): Promise<ParsedTask> {
     const response = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo-1106',
+      model: 'gpt-3.5-turbo',
       messages: [
         {
           role: 'system',
@@ -57,7 +57,7 @@ export const aiService = {
    */
   async prioritizeTasks(tasks: any[]): Promise<AIPrioritizedTask[]> {
     const response = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo-1106',
+      model: 'gpt-3.5-turbo',
       messages: [
         {
           role: 'system',
@@ -82,7 +82,7 @@ export const aiService = {
    */
   async decomposeTask(title: string, description?: string): Promise<string[]> {
     const response = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo-1106',
+      model: 'gpt-3.5-turbo',
       messages: [
         {
           role: 'system',

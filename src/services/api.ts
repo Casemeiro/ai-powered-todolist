@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios'
-import { Task, ApiResponse, User } from '@/types'
+import { Task, ApiResponse } from '@/types'
 
 class APIClient {
   private client: AxiosInstance
@@ -12,14 +12,8 @@ class APIClient {
       },
     })
 
-    // Add token to requests
-    this.client.interceptors.request.use((config) => {
-      const token = localStorage.getItem('token')
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`
-      }
-      return config
-    })
+    // NextAuth manages authentication via httpOnly cookies automatically.
+    // If a custom JWT token is needed in the future, add it here.
   }
 
   /* Task Endpoints */
@@ -49,36 +43,36 @@ class APIClient {
 
   /* AI Endpoints */
   parseTask(input: string) {
-    return this.client.post<ApiResponse>('/ai/parse-task', { input })
+    return this.client.post<ApiResponse<unknown>>('/ai/parse-task', { input })
   }
 
   prioritizeTasks(tasks: Task[]) {
-    return this.client.post<ApiResponse>('/ai/prioritize-tasks', { tasks })
+    return this.client.post<ApiResponse<unknown>>('/ai/prioritize-tasks', { tasks })
   }
 
   decomposeTask(taskId: string) {
-    return this.client.post<ApiResponse>(`/ai/decompose-task/${taskId}`)
+    return this.client.post<ApiResponse<unknown>>(`/ai/decompose-task/${taskId}`)
   }
 
   suggestTime(taskId: string) {
-    return this.client.get<ApiResponse>(`/ai/suggest-time/${taskId}`)
+    return this.client.get<ApiResponse<unknown>>(`/ai/suggest-time/${taskId}`)
   }
 
   /* Insights Endpoints */
   getDailyBriefing() {
-    return this.client.get<ApiResponse>('/insights/daily-briefing')
+    return this.client.get<ApiResponse<unknown>>('/insights/daily-briefing')
   }
 
   getWeeklyStats() {
-    return this.client.get<ApiResponse>('/insights/weekly-stats')
+    return this.client.get<ApiResponse<unknown>>('/insights/weekly-stats')
   }
 
   getTrends() {
-    return this.client.get<ApiResponse>('/insights/trends')
+    return this.client.get<ApiResponse<unknown>>('/insights/trends')
   }
 
   getProductivityHours() {
-    return this.client.get<ApiResponse>('/insights/productivity-hours')
+    return this.client.get<ApiResponse<unknown>>('/insights/productivity-hours')
   }
 }
 

@@ -10,6 +10,8 @@ export default function Home() {
   const setTasks = useTaskStore((state) => state.setTasks);
 
   useEffect(() => {
+    const abortController = new AbortController();
+
     const fetchTasks = async () => {
       try {
         const response = await apiClient.getTasks();
@@ -17,11 +19,14 @@ export default function Home() {
           setTasks(response.data.data);
         }
       } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') return;
         console.error('Failed to fetch tasks:', error);
       }
     };
 
     fetchTasks();
+
+    return () => abortController.abort();
   }, [setTasks]);
 
   return (
@@ -32,7 +37,7 @@ export default function Home() {
             <span className="text-primary">✨</span> AI To-Do List
           </h1>
           <p className="text-neutral-500 max-w-lg mx-auto">
-            Manage your studies with the power of AI. Just type what you need to do, and we'll handle the rest.
+            Manage your studies with the power of AI. Just type what you need to do, and we&apos;ll handle the rest.
           </p>
         </header>
 
